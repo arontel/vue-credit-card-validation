@@ -109,8 +109,8 @@ const cardFormatUtils = {
         // Avoid using reserved word `char`
         for (let i in chars) {
             let idx = fullWidth.indexOf(chars[i]);
-            if (idx > -1) { 
-                chars[i] = halfWidth[idx]; 
+            if (idx > -1) {
+                chars[i] = halfWidth[idx];
             }
             value += chars[i];
         }
@@ -151,11 +151,14 @@ const cardFormatUtils = {
         let target = e.currentTarget;
         let value = target.value;
         let card = cardFormatUtils.cardFromNumber(value + digit);
-        let length = (value.replace(/\D/g, '') + digit);
+        let cardValue = (value.replace(/\D/g, '') + digit);
 
         let upperLength = 16;
         if (card) { upperLength = card.length[card.length.length - 1]; }
-        if (length >= upperLength) { return; }
+        if (cardValue.length > upperLength) {
+            e.preventDefault();
+            return;
+        }
 
         // Return if focus isn't at the end of the text
         if ((target.selectionStart != null) &&
@@ -169,7 +172,7 @@ const cardFormatUtils = {
         }
 
         // If '4242' + 4
-        if (re.test(value + digit)) {
+        if (re.test(value)) {
             e.preventDefault();
             return setTimeout(() => target.value = value + ' ' + digit);
 
@@ -364,13 +367,13 @@ const cardFormatUtils = {
     },
 
     setCardType: function (e) {
-        
+
         let target = e.currentTarget;
         let val = target.value;
         let cardType = validation.cardType(val) || 'unknown';
 
         if (target.className.indexOf(cardType) === -1) {
-            
+
             let allTypes = [];
             for(let i in cards){
                 allTypes.push(cards[i].type);
@@ -381,7 +384,7 @@ const cardFormatUtils = {
             target.classList.remove(... allTypes);
             target.classList.add(cardType);
             target.dataset.cardBrand = cardType;
-            
+
             if(cardType !== 'unknown'){
                 target.classList.add('identified');
             }
